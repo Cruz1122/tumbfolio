@@ -1,4 +1,4 @@
-.PHONY: install dev dev-web dev-api dev-worker build lint typecheck test db-generate db-migrate docker-up docker-down clean
+.PHONY: install dev dev-web dev-api dev-worker build lint typecheck test db-generate db-migrate db-seed docker-up docker-down clean
 
 install:
 	corepack enable
@@ -34,6 +34,9 @@ db-generate:
 
 db-migrate:
 	pnpm db:migrate
+
+db-seed:
+	pnpm db:seed
 
 docker-up:
 	docker compose up -d postgres redis minio

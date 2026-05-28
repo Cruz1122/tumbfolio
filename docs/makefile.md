@@ -13,6 +13,9 @@ make lint
 make test
 make docker-up
 make docker-down
+make db-generate
+make db-migrate
+make db-seed
 ```
 
 `make dev` levanta tres procesos: Next.js, NestJS API y NestJS worker.

@@ -3,11 +3,19 @@ import postgres from "postgres";
 import { getDbEnv } from "@tumbfolio/config";
 import * as schema from "./schema.js";
 
+export type TumbfolioDb = ReturnType<typeof createDbClient>["db"];
+
 export function createDbClient(databaseUrl = getDbEnv().DATABASE_URL) {
-  const client = postgres(databaseUrl, { prepare: false });
-  const db = drizzle(client, { schema });
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is required to create a database client.");
+  }
 
-  return { client, db };
+  const queryClient = postgres(databaseUrl, { prepare: false });
+  const db = drizzle(queryClient, { schema });
+
+  return {
+    db,
+    queryClient,
+    close: () => queryClient.end()
+  };
 }
-
-export type DbClient = ReturnType<typeof createDbClient>["db"];

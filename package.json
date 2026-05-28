@@ -19,7 +19,8 @@
     "test": "pnpm -r test",
     "test:e2e": "pnpm --filter @tumbfolio/web test:e2e",
     "db:generate": "pnpm --filter @tumbfolio/db db:generate",
-    "db:migrate": "pnpm --filter @tumbfolio/db db:migrate"
+    "db:migrate": "pnpm --filter @tumbfolio/db db:migrate",
+    "db:seed": "pnpm --filter @tumbfolio/db db:seed"
   },
   "devDependencies": {
     "@playwright/test": "1.60.0",

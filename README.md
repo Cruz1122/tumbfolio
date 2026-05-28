@@ -159,7 +159,10 @@ make build
 ```bash
 make db-generate
 make db-migrate
+make db-seed
 ```
+
+Orden de ejecución: `db-generate` → `db-migrate` → `db-seed`.
 
 ## Documentación
 
