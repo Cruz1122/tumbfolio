@@ -9,3 +9,6 @@ coverage
 playwright-report
 test-results
 *.tsbuildinfo
+
+# file to keep track of the current context
+docs/contexto-actual.md 
