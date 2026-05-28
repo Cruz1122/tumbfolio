@@ -8,7 +8,5 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"],
-  "references": [
-    { "path": "../../packages/config" }
-  ]
+  "references": []
 }

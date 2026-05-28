@@ -347,40 +347,31 @@ No se agregan `@types/dompurify` ni `@types/jszip` porque las versiones actuales
 }
 ```
 
-## Estructura recomendada del repositorio
+## Estructura del monorepo
+
+Ver también [`docs/monorepo.md`](../monorepo.md) y [`docs/project-structure.md`](../project-structure.md).
 
 ```txt
 tumbfolio/
-├── app/
-│   ├── (editor)/
-│   ├── (presentation)/
-│   ├── api/
-│   └── layout.tsx
-├── components/
-│   ├── editor/
-│   ├── renderers/
-│   ├── slides/
-│   └── ui/
-├── lib/
-│   ├── notebook/
-│   ├── presentation/
-│   ├── nbxp/
-│   ├── exports/
-│   ├── storage/
-│   ├── ai/
-│   └── security/
-├── db/
-│   ├── schema.ts
-│   ├── migrations/
-│   └── client.ts
-├── workers/
-│   ├── export-worker.ts
-│   └── notebook-worker.ts
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── e2e/
-└── package.json
+├── apps/
+│   ├── web/          Next.js frontend (localhost:3000)
+│   ├── api/          NestJS API (localhost:4000)
+│   └── worker/       NestJS/BullMQ workers
+├── packages/
+│   ├── domain/       Tipos, enums, schemas puros, fixtures
+│   ├── config/       Validación de entorno con Zod
+│   ├── db/           Drizzle schema + migraciones + seed
+│   ├── storage/      S3 ObjectStorage interface
+│   ├── notebook/     Parser de notebooks .ipynb
+│   ├── nbxp/         Serializador NBXP
+│   ├── export/       Contratos de exportación
+│   ├── render-contracts/  Interfaces MimeRenderer
+│   └── testing/      Fixtures compartidos
+├── docs/             Documentación técnica
+├── Makefile
+├── docker-compose.yml
+├── package.json
+└── pnpm-workspace.yaml
 ```
 
 ## Servicios de infraestructura

@@ -1,95 +1,28 @@
-import { z } from "zod";
+/* ----------------------------------------------------------------------- */
+/*  @tumbfolio/config — barrel re-export                                   */
+/*                                                                         */
+/*  Usage:                                                                 */
+/*    import { loadApiEnv } from "@tumbfolio/config";                      */
+/*    import { loadWebEnv } from "@tumbfolio/config";                      */
+/*    import { loadWorkerEnv } from "@tumbfolio/config";                   */
+/*    import { loadDbEnv, parseRedisUrl } from "@tumbfolio/config";        */
+/* ----------------------------------------------------------------------- */
 
-const BooleanFromStringSchema = z
-  .enum(["true", "false", "1", "0"])
-  .transform((value) => value === "true" || value === "1")
-  .default(false);
+export {
+  BooleanFromStringSchema,
+  NodeEnvSchema,
+  PortSchema,
+  DbEnvSchema,
+  loadDbEnv,
+  parseRedisUrl,
+} from "./common-env.js";
+export type { DbEnv } from "./common-env.js";
 
-const PortSchema = z.coerce.number().int().min(1).max(65535);
+export { WebEnvSchema, loadWebEnv } from "./web-env.js";
+export type { WebEnv } from "./web-env.js";
 
-const NodeEnvSchema = z.enum(["development", "test", "production"]).default("development");
+export { ApiEnvSchema, loadApiEnv } from "./api-env.js";
+export type { ApiEnv } from "./api-env.js";
 
-export const WebEnvSchema = z.object({
-  NODE_ENV: NodeEnvSchema,
-  WEB_PORT: PortSchema.default(3000),
-  NEXT_PUBLIC_API_BASE_URL: z.string().url().default("http://localhost:4000/api")
-});
-export type WebEnv = z.infer<typeof WebEnvSchema>;
-
-export const ApiEnvSchema = z.object({
-  NODE_ENV: NodeEnvSchema,
-  API_PORT: PortSchema.default(4000),
-  WEB_ORIGIN: z.string().url().default("http://localhost:3000"),
-  DATABASE_URL: z.string().min(1).default("postgres://tumbfolio:tumbfolio@localhost:5432/tumbfolio"),
-  REDIS_URL: z.string().url().default("redis://localhost:6379"),
-  S3_REGION: z.string().default("us-east-1"),
-  S3_ENDPOINT: z.string().url().optional(),
-  S3_BUCKET: z.string().min(1).default("tumbfolio-local"),
-  S3_ACCESS_KEY_ID: z.string().optional(),
-  S3_SECRET_ACCESS_KEY: z.string().optional(),
-  S3_FORCE_PATH_STYLE: BooleanFromStringSchema,
-  OPENAI_API_KEY: z.string().optional()
-});
-export type ApiEnv = z.infer<typeof ApiEnvSchema>;
-
-export const WorkerEnvSchema = z.object({
-  NODE_ENV: NodeEnvSchema,
-  REDIS_URL: z.string().url().default("redis://localhost:6379"),
-  DATABASE_URL: z.string().min(1).default("postgres://tumbfolio:tumbfolio@localhost:5432/tumbfolio"),
-  WORKER_QUEUES_ENABLED: BooleanFromStringSchema,
-  S3_REGION: z.string().default("us-east-1"),
-  S3_ENDPOINT: z.string().url().optional(),
-  S3_BUCKET: z.string().min(1).default("tumbfolio-local"),
-  S3_ACCESS_KEY_ID: z.string().optional(),
-  S3_SECRET_ACCESS_KEY: z.string().optional(),
-  S3_FORCE_PATH_STYLE: BooleanFromStringSchema
-});
-export type WorkerEnv = z.infer<typeof WorkerEnvSchema>;
-
-export const DbEnvSchema = z.object({
-  DATABASE_URL: z.string().min(1)
-});
-export type DbEnv = z.infer<typeof DbEnvSchema>;
-
-function parseEnv<T>(schema: z.ZodType<T>, env: NodeJS.ProcessEnv, label: string): T {
-  const parsed = schema.safeParse(env);
-
-  if (!parsed.success) {
-    const details = parsed.error.issues
-      .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
-      .join("; ");
-    throw new Error(`Invalid ${label} environment: ${details}`);
-  }
-
-  return parsed.data;
-}
-
-export function getWebEnv(env: NodeJS.ProcessEnv = process.env): WebEnv {
-  return parseEnv(WebEnvSchema, env, "web");
-}
-
-export function getApiEnv(env: NodeJS.ProcessEnv = process.env): ApiEnv {
-  return parseEnv(ApiEnvSchema, env, "api");
-}
-
-export function getWorkerEnv(env: NodeJS.ProcessEnv = process.env): WorkerEnv {
-  return parseEnv(WorkerEnvSchema, env, "worker");
-}
-
-export function getDbEnv(env: NodeJS.ProcessEnv = process.env): DbEnv {
-  return parseEnv(DbEnvSchema, env, "db");
-}
-
-export function parseRedisUrl(redisUrl: string): { host: string; port: number; password?: string } {
-  const url = new URL(redisUrl);
-  const parsed: { host: string; port: number; password?: string } = {
-    host: url.hostname,
-    port: Number(url.port || 6379)
-  };
-
-  if (url.password) {
-    parsed.password = decodeURIComponent(url.password);
-  }
-
-  return parsed;
-}
+export { WorkerEnvSchema, loadWorkerEnv } from "./worker-env.js";
+export type { WorkerEnv } from "./worker-env.js";

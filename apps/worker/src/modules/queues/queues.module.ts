@@ -1,7 +1,7 @@
 import type { DynamicModule} from "@nestjs/common";
 import { Module } from "@nestjs/common";
 import { BullModule } from "@nestjs/bullmq";
-import { getWorkerEnv, parseRedisUrl } from "@tumbfolio/config";
+import { loadWorkerEnv, parseRedisUrl } from "@tumbfolio/config";
 import { AssetJobsProcessor } from "./processors/asset-jobs.processor.js";
 import { ExportJobsProcessor } from "./processors/export-jobs.processor.js";
 import { NbxpJobsProcessor } from "./processors/nbxp-jobs.processor.js";
@@ -11,7 +11,7 @@ import { ASSET_QUEUE, EXPORT_QUEUE, NBXP_QUEUE, NOTEBOOK_QUEUE } from "./queue-n
 @Module({})
 export class QueuesModule {
   static register(): DynamicModule {
-    const env = getWorkerEnv();
+    const env = loadWorkerEnv();
 
     if (!env.WORKER_QUEUES_ENABLED) {
       return {

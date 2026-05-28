@@ -10,6 +10,7 @@ import { PresentationsModule } from "./modules/presentations/presentations.modul
 import { ProjectsModule } from "./modules/projects/projects.module.js";
 import { SharingModule } from "./modules/sharing/sharing.module.js";
 import { SlidesModule } from "./modules/slides/slides.module.js";
+import { StorageModule } from "./modules/storage/storage.module.js";
 import { ThemesModule } from "./modules/themes/themes.module.js";
 import { UsersModule } from "./modules/users/users.module.js";
 
@@ -27,6 +28,7 @@ import { UsersModule } from "./modules/users/users.module.js";
     NbxpModule,
     AiModule,
     SharingModule,
+    StorageModule,
     ObservabilityModule
   ]
 })

@@ -1,0 +1,149 @@
+import type { Readable } from "node:stream";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+  type S3ClientConfig,
+} from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {
+  DEFAULT_MULTIPART_PART_SIZE_BYTES,
+  DEFAULT_MULTIPART_QUEUE_SIZE,
+  DEFAULT_SIGNED_URL_TTL_SECONDS,
+} from "./constants.js";
+import { assertStorageKey } from "./keys.js";
+import type {
+  DeleteObjectInput,
+  GetObjectResult,
+  MultipartUploadInput,
+  ObjectStorage,
+  PresignedUploadUrlInput,
+  PresignedUrlInput,
+  PutObjectInput,
+  PutObjectResult,
+} from "./types.js";
+
+export type S3ObjectStorageConfig = {
+  bucket: string;
+  clientConfig: S3ClientConfig;
+};
+
+export class S3ObjectStorage implements ObjectStorage {
+  private readonly client: S3Client;
+  private readonly bucket: string;
+
+  constructor(config: S3ObjectStorageConfig) {
+    this.bucket = config.bucket;
+    this.client = new S3Client(config.clientConfig);
+  }
+
+  async putObject(input: PutObjectInput): Promise<PutObjectResult> {
+    assertStorageKey(input.key);
+
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+        Body: input.body,
+        ContentType: input.contentType,
+        Metadata: input.metadata,
+      }),
+    );
+
+    return {
+      key: input.key,
+      bucket: this.bucket,
+      contentType: input.contentType,
+    };
+  }
+
+  async multipartUpload(input: MultipartUploadInput): Promise<PutObjectResult> {
+    assertStorageKey(input.key);
+
+    const upload = new Upload({
+      client: this.client,
+      params: {
+        Bucket: this.bucket,
+        Key: input.key,
+        Body: input.body,
+        ContentType: input.contentType,
+        Metadata: input.metadata,
+      },
+      queueSize: input.queueSize ?? DEFAULT_MULTIPART_QUEUE_SIZE,
+      partSize: input.partSizeBytes ?? DEFAULT_MULTIPART_PART_SIZE_BYTES,
+      leavePartsOnError: false,
+    });
+
+    await upload.done();
+
+    return {
+      key: input.key,
+      bucket: this.bucket,
+      contentType: input.contentType,
+    };
+  }
+
+  async getObject(key: string): Promise<GetObjectResult> {
+    assertStorageKey(key);
+
+    const result = await this.client.send(
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+      }),
+    );
+
+    return {
+      key,
+      contentType: result.ContentType,
+      contentLength: result.ContentLength,
+      body: result.Body as Readable,
+    };
+  }
+
+  async deleteObject(input: DeleteObjectInput): Promise<void> {
+    assertStorageKey(input.key);
+
+    await this.client.send(
+      new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+      }),
+    );
+  }
+
+  async getSignedDownloadUrl(input: PresignedUrlInput): Promise<string> {
+    assertStorageKey(input.key);
+
+    return getSignedUrl(
+      this.client,
+      new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+      }),
+      {
+        expiresIn:
+          input.expiresInSeconds ?? DEFAULT_SIGNED_URL_TTL_SECONDS,
+      },
+    );
+  }
+
+  async getSignedUploadUrl(input: PresignedUploadUrlInput): Promise<string> {
+    assertStorageKey(input.key);
+
+    return getSignedUrl(
+      this.client,
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: input.key,
+        ContentType: input.contentType,
+      }),
+      {
+        expiresIn:
+          input.expiresInSeconds ?? DEFAULT_SIGNED_URL_TTL_SECONDS,
+      },
+    );
+  }
+}
