@@ -45,6 +45,7 @@ export type PresignedUrlInput = {
 
 export type PresignedUploadUrlInput = PresignedUrlInput & {
   contentType: string;
+  metadata?: StorageObjectMetadata;
 };
 
 export type DeleteObjectInput = {
@@ -58,10 +59,18 @@ export type GetObjectResult = {
   body: Readable;
 };
 
+export type HeadObjectResult = {
+  key: string;
+  contentType: string | undefined;
+  size: number | undefined;
+  metadata: Record<string, string> | undefined;
+};
+
 export type ObjectStorage = {
   putObject(input: PutObjectInput): Promise<PutObjectResult>;
   multipartUpload(input: MultipartUploadInput): Promise<PutObjectResult>;
   getObject(key: string): Promise<GetObjectResult>;
+  headObject(key: string): Promise<HeadObjectResult | null>;
   deleteObject(input: DeleteObjectInput): Promise<void>;
   getSignedDownloadUrl(input: PresignedUrlInput): Promise<string>;
   getSignedUploadUrl(input: PresignedUploadUrlInput): Promise<string>;

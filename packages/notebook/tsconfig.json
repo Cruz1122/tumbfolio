@@ -3,8 +3,16 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["node"]
   },
+  "files": [
+    "src/index.ts",
+    "src/normalize-source.ts",
+    "src/mime-priority.ts",
+    "src/normalize-output.ts",
+    "src/parse-notebook.ts"
+  ],
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"],
   "references": [

@@ -2,6 +2,7 @@ import type { Readable } from "node:stream";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
   type S3ClientConfig,
@@ -17,6 +18,7 @@ import { assertStorageKey } from "./keys.js";
 import type {
   DeleteObjectInput,
   GetObjectResult,
+  HeadObjectResult,
   MultipartUploadInput,
   ObjectStorage,
   PresignedUploadUrlInput,
@@ -103,6 +105,34 @@ export class S3ObjectStorage implements ObjectStorage {
     };
   }
 
+  async headObject(key: string): Promise<HeadObjectResult | null> {
+    assertStorageKey(key);
+
+    try {
+      const result = await this.client.send(
+        new HeadObjectCommand({
+          Bucket: this.bucket,
+          Key: key,
+        }),
+      );
+
+      return {
+        key,
+        contentType: result.ContentType,
+        size: result.ContentLength,
+        metadata: result.Metadata,
+      };
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        (error.name === "NotFound" || error.name === "NoSuchKey")
+      ) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
   async deleteObject(input: DeleteObjectInput): Promise<void> {
     assertStorageKey(input.key);
 
@@ -139,6 +169,7 @@ export class S3ObjectStorage implements ObjectStorage {
         Bucket: this.bucket,
         Key: input.key,
         ContentType: input.contentType,
+        Metadata: input.metadata,
       }),
       {
         expiresIn:

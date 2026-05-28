@@ -1,15 +1,14 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
-import { ApiErrorCode } from "../../common/errors/api-error-code.js";
-import { ApiException } from "../../common/errors/api.exception.js";
 import type { NotebookSummaryDto } from "./dto/notebook.dto.js";
+import { Injectable } from "@nestjs/common";
+import type { NotebookValidationService } from "./notebook-validation.service.js";
 
 @Injectable()
 export class NotebooksService {
-  getSummary(_notebookId: string): Promise<NotebookSummaryDto> {
-    throw new ApiException(
-      ApiErrorCode.NOT_IMPLEMENTED,
-      "Notebook summary endpoint is prepared but not implemented. T-08 will connect validation results.",
-      HttpStatus.NOT_IMPLEMENTED,
-    );
+  constructor(
+    private readonly notebookValidationService: NotebookValidationService,
+  ) {}
+
+  getSummary(notebookId: string): Promise<NotebookSummaryDto> {
+    return this.notebookValidationService.getSummary(notebookId);
   }
 }

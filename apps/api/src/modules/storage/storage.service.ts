@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { Readable } from "node:stream";
 import {
   buildStorageKey,
   detectMimeTypeFromBuffer,
   extensionFromMimeType,
   S3ObjectStorage,
   sha256Buffer,
+  type HeadObjectResult,
   type ObjectStorage,
   type StorageNamespace,
 } from "@tumbfolio/storage";
@@ -91,10 +93,12 @@ export class StorageService {
   getSignedUploadUrl(input: {
     key: string;
     contentType: string;
+    metadata?: Record<string, string>;
   }): Promise<string> {
     return this.storage.getSignedUploadUrl({
       key: input.key,
       contentType: input.contentType,
+      ...(input.metadata ? { metadata: input.metadata } : {}),
     });
   }
 
@@ -104,5 +108,36 @@ export class StorageService {
 
   getObject(key: string) {
     return this.storage.getObject(key);
+  }
+
+  async headObject(key: string): Promise<HeadObjectResult | null> {
+    return this.storage.headObject(key);
+  }
+
+  async getObjectAsText(key: string): Promise<string> {
+    const result = await this.storage.getObject(key);
+    const chunks: Buffer[] = [];
+
+    for await (const chunk of result.body as Readable) {
+      chunks.push(Buffer.from(chunk));
+    }
+
+    return Buffer.concat(chunks).toString("utf8");
+  }
+
+  async createSignedUploadUrl(input: {
+    key: string;
+    contentType: string;
+    expiresInSeconds?: number;
+    metadata?: Record<string, string>;
+  }): Promise<string> {
+    return this.storage.getSignedUploadUrl({
+      key: input.key,
+      contentType: input.contentType,
+      ...(input.expiresInSeconds !== undefined
+        ? { expiresInSeconds: input.expiresInSeconds }
+        : {}),
+      ...(input.metadata ? { metadata: input.metadata } : {}),
+    });
   }
 }

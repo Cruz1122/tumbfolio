@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AiModule } from "./modules/ai/ai.module.js";
 import { AssetsModule } from "./modules/assets/assets.module.js";
+import { DatabaseModule } from "./modules/database/database.module.js";
 import { ExportsModule } from "./modules/exports/exports.module.js";
 import { HealthModule } from "./modules/health/health.module.js";
 import { NbxpModule } from "./modules/nbxp/nbxp.module.js";
@@ -14,6 +15,7 @@ import { ThemesModule } from "./modules/themes/themes.module.js";
 
 @Module({
   imports: [
+    DatabaseModule,
     HealthModule,
     ProjectsModule,
     NotebooksModule,

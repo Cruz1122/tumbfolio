@@ -83,6 +83,9 @@ importers:
       '@tumbfolio/domain':
         specifier: workspace:*
         version: link:../../packages/domain
+      '@tumbfolio/notebook':
+        specifier: workspace:*
+        version: link:../../packages/notebook
       '@tumbfolio/storage':
         specifier: workspace:*
         version: link:../../packages/storage
@@ -98,6 +101,9 @@ importers:
       compression:
         specifier: 1.8.1
         version: 1.8.1
+      drizzle-orm:
+        specifier: 0.45.2
+        version: 0.45.2(postgres@3.4.9)
       helmet:
         specifier: 8.2.0
         version: 8.2.0
