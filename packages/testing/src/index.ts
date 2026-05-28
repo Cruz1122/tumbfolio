@@ -1,4 +1,4 @@
-import type { Presentation } from "@tumbfolio/domain";
+import type { Presentation, Slide } from "@tumbfolio/domain";
 
 export const FIXTURE_IDS = {
   projectId: "00000000-0000-4000-8000-000000000001",
@@ -12,18 +12,26 @@ export const minimalPresentationFixture: Presentation = {
   title: "Fixture presentation",
   mode: "default",
   status: "draft",
-  slides: [
-    {
-      id: FIXTURE_IDS.slideId,
-      presentationId: FIXTURE_IDS.presentationId,
-      order: 0,
-      title: "First slide",
-      layout: "title",
-      status: "normal",
-      sourceCellIds: [],
-      blocks: []
-    }
-  ],
+  slideCount: 0,
+  description: undefined,
+  themeId: undefined,
+  sourceNotebookId: undefined,
   metadata: {},
-  presentationModelVersion: "1.0.0"
+  createdAt: "2026-05-28T10:00:00.000Z",
+  updatedAt: "2026-05-28T10:00:00.000Z"
+};
+
+export const minimalSlideFixture: Slide = {
+  id: FIXTURE_IDS.slideId,
+  presentationId: FIXTURE_IDS.presentationId,
+  slideOrder: 0,
+  title: "First slide",
+  layout: "title",
+  status: "normal",
+  sourceCellIds: [],
+  speakerNotes: undefined,
+  subtitle: undefined,
+  metadata: {},
+  createdAt: "2026-05-28T10:00:00.000Z",
+  updatedAt: "2026-05-28T10:00:00.000Z"
 };

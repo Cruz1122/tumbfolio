@@ -1,8 +1,8 @@
 import { XMLBuilder } from "fast-xml-parser";
-import type { Presentation } from "@tumbfolio/domain";
+import { NBXP_PACKAGE_VERSION } from "@tumbfolio/domain";
 
+export { NBXP_PACKAGE_VERSION };
 export const NBXP_MIME_TYPE = "application/vnd.tumbfolio.nbxp+zip";
-export const NBXP_PACKAGE_VERSION = "1.0";
 
 export type NbxpManifestPart = {
   href: string;
@@ -44,7 +44,7 @@ export function buildManifestXml(manifest: NbxpManifest): string {
   });
 }
 
-export function buildPresentationXmlSkeleton(presentation: Pick<Presentation, "id" | "title" | "presentationModelVersion">): string {
+export function buildPresentationXmlSkeleton(input: { id: string; title: string; presentationModelVersion: string }): string {
   const builder = new XMLBuilder({
     ignoreAttributes: false,
     format: true,
@@ -54,9 +54,9 @@ export function buildPresentationXmlSkeleton(presentation: Pick<Presentation, "i
   return builder.build({
     "nbxp:presentation": {
       "@_xmlns:nbxp": "https://tumbfolio.app/schema/nbxp/1.0",
-      "@_version": presentation.presentationModelVersion,
-      "@_id": presentation.id,
-      "@_title": presentation.title
+      "@_version": input.presentationModelVersion,
+      "@_id": input.id,
+      "@_title": input.title
     }
   });
 }

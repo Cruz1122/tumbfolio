@@ -1,0 +1,12 @@
+export type UserId = string;
+export type ProjectId = string;
+export type SourceNotebookId = string;
+export type NotebookCellId = string;
+export type NotebookOutputId = string;
+export type PresentationId = string;
+export type SlideId = string;
+export type SlideBlockId = string;
+export type AssetId = string;
+export type ThemeId = string;
+export type ExportJobId = string;
+export type AiSuggestionId = string;
