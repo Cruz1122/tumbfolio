@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./apps/web/public/tumbfolio.svg" alt="Tumbfolio" width="160" />
+  <img src="./public/tumbfolio.svg" alt="Tumbfolio" width="160" />
 </p>
 
 <p align="center" style="font-size:2rem;"><strong>Tumbfolio</strong></p>
