@@ -1,17 +1,20 @@
 import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import type { HealthResponse } from "@tumbfolio/domain";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+
+class HealthResponseDto {
+  status!: "ok";
+  service!: "api";
+}
 
 @ApiTags("health")
-@Controller()
+@Controller("health")
 export class HealthController {
   @Get()
-  getHealth(): HealthResponse {
+  @ApiOkResponse({ type: HealthResponseDto })
+  getHealth(): HealthResponseDto {
     return {
       status: "ok",
       service: "api",
-      timestamp: new Date().toISOString(),
-      version: "0.0.0"
     };
   }
 }

@@ -1,45 +1,65 @@
 import "reflect-metadata";
 import compression from "compression";
-import { json, urlencoded } from "express";
 import helmet from "helmet";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { loadApiEnv } from "@tumbfolio/config";
 import { AppModule } from "./app.module.js";
-import { ApiExceptionFilter } from "./common/filters/api-exception.filter.js";
+import {
+  API_DOCS_PATH,
+  API_PREFIX,
+} from "./common/constants/api.constants.js";
+import { ApiExceptionFilter } from "./common/errors/api-exception.filter.js";
 import { RequestIdInterceptor } from "./common/interceptors/request-id.interceptor.js";
+import { RequestLoggingInterceptor } from "./common/interceptors/request-logging.interceptor.js";
+import { validationExceptionFactory } from "./common/validation/validation-exception.factory.js";
 
 async function bootstrap() {
   const env = loadApiEnv();
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix("api");
-  app.enableCors({ origin: env.WEB_ORIGIN, credentials: true });
+  app.setGlobalPrefix(API_PREFIX);
+
+  app.enableCors({
+    origin: env.WEB_ORIGIN,
+    credentials: true,
+  });
+
   app.use(helmet());
   app.use(compression());
-  app.use(json({ limit: "10mb" }));
-  app.use(urlencoded({ extended: true, limit: "10mb" }));
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true
-    })
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      exceptionFactory: validationExceptionFactory,
+    }),
   );
-  app.useGlobalFilters(new ApiExceptionFilter());
-  app.useGlobalInterceptors(new RequestIdInterceptor());
 
-  const config = new DocumentBuilder()
+  app.useGlobalFilters(new ApiExceptionFilter());
+  app.useGlobalInterceptors(
+    new RequestIdInterceptor(),
+    new RequestLoggingInterceptor(),
+  );
+
+  const swaggerConfig = new DocumentBuilder()
     .setTitle("Tumbfolio API")
-    .setDescription("Internal API for projects, notebooks, presentations and exports.")
-    .setVersion("0.0.0")
+    .setDescription(
+      "NestJS HTTP API for projects, notebooks, presentations, slides, assets, themes, exports, NBXP, AI suggestions and sharing.",
+    )
+    .setVersion("0.1.0")
+    .addBearerAuth()
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api/docs", app, document);
+
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup(API_DOCS_PATH, app, swaggerDocument);
 
   await app.listen(env.API_PORT);
-  console.log(`Tumbfolio API listening on http://localhost:${env.API_PORT}/api`);
 }
 
 void bootstrap();

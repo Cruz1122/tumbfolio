@@ -1,15 +1,18 @@
 import { Controller, Get } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-responses.decorator.js";
+import { ThemeDto } from "./dto/theme.dto.js";
+import type { ThemesService } from "./themes.service.js";
 
 @ApiTags("themes")
+@ApiDefaultErrorResponses()
 @Controller("themes")
 export class ThemesController {
-  @Get("health")
-  getModuleHealth() {
-    return {
-      status: "ok",
-      module: "themes",
-      timestamp: new Date().toISOString()
-    };
+  constructor(private readonly themesService: ThemesService) {}
+
+  @Get()
+  @ApiOkResponse({ type: [ThemeDto] })
+  list(): Promise<ThemeDto[]> {
+    return this.themesService.list();
   }
 }
