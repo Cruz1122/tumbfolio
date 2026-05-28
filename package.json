@@ -1,0 +1,42 @@
+{
+  "name": "tumbfolio",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.4.0",
+  "engines": {
+    "node": ">=24.14.0 <25",
+    "pnpm": "11.4.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter @tumbfolio/api dev\" \"pnpm --filter @tumbfolio/web dev\" \"pnpm --filter @tumbfolio/worker dev\"",
+    "dev:web": "pnpm --filter @tumbfolio/web dev",
+    "dev:api": "pnpm --filter @tumbfolio/api dev",
+    "dev:worker": "pnpm --filter @tumbfolio/worker dev",
+    "build": "pnpm -r build",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc -b tsconfig.json",
+    "format": "prettier --write .",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @tumbfolio/web test:e2e",
+    "db:generate": "pnpm --filter @tumbfolio/db db:generate",
+    "db:migrate": "pnpm --filter @tumbfolio/db db:migrate"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.60.0",
+    "@types/node": "24.12.4",
+    "concurrently": "9.2.1",
+    "eslint": "9.39.4",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.8.3",
+    "prettier-plugin-tailwindcss": "0.8.0",
+    "tsx": "4.22.3",
+    "tsup": "8.5.1",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.60.0",
+    "jsdom": "26.1.0",
+    "vitest": "4.1.7",
+    "wait-on": "9.0.10"
+  }
+}

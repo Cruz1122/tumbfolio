@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/domain" },
+    { "path": "./packages/config" },
+    { "path": "./packages/db" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/notebook" },
+    { "path": "./packages/nbxp" },
+    { "path": "./packages/export" },
+    { "path": "./packages/render-contracts" },
+    { "path": "./packages/testing" },
+    { "path": "./apps/api" },
+    { "path": "./apps/worker" }
+  ]
+}

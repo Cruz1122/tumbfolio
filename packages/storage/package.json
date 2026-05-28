@@ -1,0 +1,29 @@
+{
+  "name": "@tumbfolio/storage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1055.0",
+    "@aws-sdk/lib-storage": "3.1055.0",
+    "@aws-sdk/s3-request-presigner": "3.1055.0",
+    "@tumbfolio/config": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "24.12.4"
+  }
+}
