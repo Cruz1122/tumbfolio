@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { NodeEnvSchema, PortSchema, parseEnv } from "./common-env.js";
+import {
+  NodeEnvSchema,
+  PortSchema,
+  parseEnv,
+  resolveEnv,
+} from "./common-env.js";
 
 /* ----------------------------------------------------------------------- */
 /*  WebEnv — validated environment for the Next.js frontend                */
@@ -21,5 +26,5 @@ export type WebEnv = z.infer<typeof WebEnvSchema>;
 export function loadWebEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): WebEnv {
-  return parseEnv(WebEnvSchema, env, "web");
+  return parseEnv(WebEnvSchema, resolveEnv(env), "web");
 }

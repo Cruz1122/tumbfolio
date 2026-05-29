@@ -2,8 +2,6 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { ApiErrorCode } from "../../common/errors/api-error-code.js";
 import { ApiException } from "../../common/errors/api.exception.js";
-import type { DbService } from "../database/database.service.js";
-import type { StorageService } from "../storage/storage.service.js";
 import type {
   CompleteNotebookUploadDto,
   CompleteNotebookUploadResponseDto,
@@ -12,6 +10,8 @@ import type {
   InitiateNotebookUploadDto,
   InitiateNotebookUploadResponseDto,
 } from "./dto/initiate-notebook-upload.dto.js";
+import { DbService } from "../database/database.service.js";
+import { StorageService } from "../storage/storage.service.js";
 
 const MAX_NOTEBOOK_SIZE_BYTES = 50 * 1024 * 1024;
 const NOTEBOOK_UPLOAD_TTL_SECONDS = 900;

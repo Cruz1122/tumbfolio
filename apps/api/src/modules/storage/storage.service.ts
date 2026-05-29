@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Readable } from "node:stream";
 import {
   buildStorageKey,
@@ -29,8 +29,9 @@ export type StoreBufferResult = {
 };
 
 @Injectable()
-export class StorageService {
+export class StorageService implements OnModuleInit {
   private readonly storage: ObjectStorage;
+  private readonly logger = new Logger(StorageService.name);
 
   constructor() {
     const env = loadApiEnv();
@@ -51,6 +52,18 @@ export class StorageService {
           : {}),
       },
     });
+  }
+
+  async onModuleInit(): Promise<void> {
+    try {
+      await this.storage.setBucketCors(["http://localhost:3000"]);
+      this.logger.log("Bucket CORS configured for http://localhost:3000");
+    } catch (error) {
+      this.logger.warn(
+        "Could not set bucket CORS (expected if bucket does not exist yet):",
+        (error as Error).message,
+      );
+    }
   }
 
   async storeBuffer(input: StoreBufferInput): Promise<StoreBufferResult> {

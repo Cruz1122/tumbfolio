@@ -6,7 +6,7 @@ import type { ProjectIdParamDto } from "../../common/dto/uuid-param.dto.js";
 import type { CreateProjectDto } from "./dto/create-project.dto.js";
 import { ProjectDetailDto, ProjectListResponseDto } from "./dto/project.dto.js";
 import type { UpdateProjectDto } from "./dto/update-project.dto.js";
-import type { ProjectsService } from "./projects.service.js";
+import { ProjectsService } from "./projects.service.js";
 
 @ApiTags("projects")
 @ApiDefaultErrorResponses()

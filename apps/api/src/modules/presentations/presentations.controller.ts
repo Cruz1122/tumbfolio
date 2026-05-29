@@ -4,7 +4,7 @@ import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-resp
 import type { PresentationIdParamDto } from "../../common/dto/uuid-param.dto.js";
 import { PresentationDto } from "./dto/presentation.dto.js";
 import type { UpdatePresentationDto } from "./dto/update-presentation.dto.js";
-import type { PresentationsService } from "./presentations.service.js";
+import { PresentationsService } from "./presentations.service.js";
 
 @ApiTags("presentations")
 @ApiDefaultErrorResponses()

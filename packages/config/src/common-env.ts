@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { z } from "zod";
 
 /* ----------------------------------------------------------------------- */
@@ -36,6 +38,68 @@ function parseEnv<T>(
   return parsed.data;
 }
 
+function findNearestEnvFile(startDir: string): string | undefined {
+  let dir = startDir;
+
+  while (true) {
+    const envPath = resolve(dir, ".env");
+    if (existsSync(envPath)) {
+      return envPath;
+    }
+
+    const parentDir = resolve(dir, "..");
+    if (parentDir === dir) {
+      return undefined;
+    }
+
+    dir = parentDir;
+  }
+}
+
+function readEnvFile(envPath: string): Record<string, string> {
+  const env: Record<string, string> = {};
+  const content = readFileSync(envPath, "utf-8");
+
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trim();
+
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const separatorIndex = line.indexOf("=");
+    if (separatorIndex <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, separatorIndex).trim();
+    const value = line
+      .slice(separatorIndex + 1)
+      .trim()
+      .replace(/^["']|["']$/g, "");
+
+    env[key] = value;
+  }
+
+  return env;
+}
+
+function resolveEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  if (env !== process.env) {
+    return env;
+  }
+
+  const envPath = findNearestEnvFile(process.cwd());
+  if (!envPath) {
+    return env;
+  }
+
+  return {
+    ...readEnvFile(envPath),
+    ...env,
+  };
+}
+
 /* ----------------------------------------------------------------------- */
 /*  parseRedisUrl — shared utility                                         */
 /* ----------------------------------------------------------------------- */
@@ -68,11 +132,17 @@ export type DbEnv = z.infer<typeof DbEnvSchema>;
 export function loadDbEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): DbEnv {
-  return parseEnv(DbEnvSchema, env, "db");
+  return parseEnv(DbEnvSchema, resolveEnv(env), "db");
 }
 
 /* ----------------------------------------------------------------------- */
 /*  Re-export shared schemas (internal use by web-env / api-env / worker)  */
 /* ----------------------------------------------------------------------- */
 
-export { BooleanFromStringSchema, PortSchema, NodeEnvSchema, parseEnv };
+export {
+  BooleanFromStringSchema,
+  PortSchema,
+  NodeEnvSchema,
+  parseEnv,
+  resolveEnv,
+};

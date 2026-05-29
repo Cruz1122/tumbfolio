@@ -12,3 +12,13 @@ test-results
 
 # file to keep track of the current context
 docs/contexto-actual.md 
+
+# logs
+logs/
+*.log
+
+# playwright
+.playwright-mcp/
+
+# superpowers
+.superpowers/

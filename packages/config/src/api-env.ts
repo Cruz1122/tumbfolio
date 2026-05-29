@@ -4,6 +4,7 @@ import {
   NodeEnvSchema,
   PortSchema,
   parseEnv,
+  resolveEnv,
 } from "./common-env.js";
 
 /* ----------------------------------------------------------------------- */
@@ -34,5 +35,5 @@ export type ApiEnv = z.infer<typeof ApiEnvSchema>;
 export function loadApiEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): ApiEnv {
-  return parseEnv(ApiEnvSchema, env, "api");
+  return parseEnv(ApiEnvSchema, resolveEnv(env), "api");
 }

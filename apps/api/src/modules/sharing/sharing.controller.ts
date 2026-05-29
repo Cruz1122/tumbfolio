@@ -4,7 +4,7 @@ import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-resp
 import type { ShareLinkIdParamDto } from "../../common/dto/uuid-param.dto.js";
 import type { CreateShareLinkDto } from "./dto/create-share-link.dto.js";
 import { ShareLinkDto } from "./dto/share-link.dto.js";
-import type { SharingService } from "./sharing.service.js";
+import { SharingService } from "./sharing.service.js";
 
 @ApiTags("sharing")
 @ApiDefaultErrorResponses()

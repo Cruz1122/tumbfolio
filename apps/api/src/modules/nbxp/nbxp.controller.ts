@@ -3,7 +3,7 @@ import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
 import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-responses.decorator.js";
 import type { CreateNbxpExportDto} from "./dto/nbxp.dto.js";
 import { NbxpExportDto } from "./dto/nbxp.dto.js";
-import type { NbxpService } from "./nbxp.service.js";
+import { NbxpService } from "./nbxp.service.js";
 
 @ApiTags("nbxp")
 @ApiDefaultErrorResponses()

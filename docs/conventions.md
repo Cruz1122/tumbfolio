@@ -261,3 +261,12 @@ Si un paquete necesita un tipo que está en otro paquete no-domain, ese tipo deb
 - Las convenciones vinculantes viven en `docs/conventions.md`.
 - Las guías de setup/uso viven en `docs/` raíz o `README.md`.
 - No crear documentación decorativa. Cada documento debe responder una pregunta que alguien del equipo pueda tener.
+
+---
+
+## 14. Iconos
+
+- Todos los iconos UI se importan de `@ant-design/icons`, no se crean SVG inline manuales.
+- Usar el barrel `@/components/Icons` para re-exportar con nombres de dominio si es necesario.
+- Preferir variante `Outlined` salvo que el contexto pida `Filled` o `TwoTone`.
+- No crear wrappers custom de iconos (`createSvgIcon`). Usar los componentes directamente.

@@ -3,6 +3,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
+  PutBucketCorsCommand,
   PutObjectCommand,
   S3Client,
   type S3ClientConfig,
@@ -175,6 +176,30 @@ export class S3ObjectStorage implements ObjectStorage {
         expiresIn:
           input.expiresInSeconds ?? DEFAULT_SIGNED_URL_TTL_SECONDS,
       },
+    );
+  }
+
+  async setBucketCors(origins: string[]): Promise<void> {
+    await this.client.send(
+      new PutBucketCorsCommand({
+        Bucket: this.bucket,
+        CORSConfiguration: {
+          CORSRules: [
+            {
+              AllowedOrigins: origins,
+              AllowedMethods: ["PUT", "POST", "GET", "HEAD", "DELETE"],
+              AllowedHeaders: [
+                "Content-Type",
+                "Content-MD5",
+                "x-amz-*",
+                "Authorization",
+              ],
+              ExposeHeaders: ["ETag"],
+              MaxAgeSeconds: 3600,
+            },
+          ],
+        },
+      }),
     );
   }
 }

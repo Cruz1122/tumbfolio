@@ -1,6 +1,6 @@
-import type { NotebookSummaryDto } from "./dto/notebook.dto.js";
 import { Injectable } from "@nestjs/common";
-import type { NotebookValidationService } from "./notebook-validation.service.js";
+import type { NotebookSummaryDto } from "./dto/notebook.dto.js";
+import { NotebookValidationService } from "./notebook-validation.service.js";
 
 @Injectable()
 export class NotebooksService {

@@ -74,4 +74,5 @@ export type ObjectStorage = {
   deleteObject(input: DeleteObjectInput): Promise<void>;
   getSignedDownloadUrl(input: PresignedUrlInput): Promise<string>;
   getSignedUploadUrl(input: PresignedUploadUrlInput): Promise<string>;
+  setBucketCors(origins: string[]): Promise<void>;
 };

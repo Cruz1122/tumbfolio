@@ -17,10 +17,10 @@ import {
   ParseNotebookQueryDto,
   ParseNotebookResponseDto,
 } from "./dto/notebook.dto.js";
-import type { NotebookParserService } from "./notebook-parser.service.js";
-import type { NotebookUploadsService } from "./notebook-uploads.service.js";
-import type { NotebookValidationService } from "./notebook-validation.service.js";
-import type { NotebooksService } from "./notebooks.service.js";
+import { NotebookParserService } from "./notebook-parser.service.js";
+import { NotebookUploadsService } from "./notebook-uploads.service.js";
+import { NotebookValidationService } from "./notebook-validation.service.js";
+import { NotebooksService } from "./notebooks.service.js";
 
 @ApiTags("notebooks")
 @ApiDefaultErrorResponses()

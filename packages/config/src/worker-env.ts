@@ -3,6 +3,7 @@ import {
   BooleanFromStringSchema,
   NodeEnvSchema,
   parseEnv,
+  resolveEnv,
 } from "./common-env.js";
 
 /* ----------------------------------------------------------------------- */
@@ -30,5 +31,5 @@ export type WorkerEnv = z.infer<typeof WorkerEnvSchema>;
 export function loadWorkerEnv(
   env: NodeJS.ProcessEnv = process.env,
 ): WorkerEnv {
-  return parseEnv(WorkerEnvSchema, env, "worker");
+  return parseEnv(WorkerEnvSchema, resolveEnv(env), "worker");
 }

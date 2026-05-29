@@ -1,3 +1,6 @@
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
 import { describe, it, expect } from "vitest";
 import { loadWebEnv } from "./web-env.js";
 import { loadApiEnv } from "./api-env.js";
@@ -112,6 +115,51 @@ describe("loadApiEnv", () => {
   it("accepts missing OPENAI_API_KEY without failing", () => {
     const env = loadApiEnv(MINIMAL_API_ENV);
     expect(env.OPENAI_API_KEY).toBeUndefined();
+  });
+
+  it("loads missing values from the nearest parent .env when using process.env", () => {
+    const tempRoot = mkdtempSync(resolve(tmpdir(), "tumbfolio-config-"));
+    const nestedDir = resolve(tempRoot, "apps", "api");
+    const previousCwd = process.cwd();
+    const previousDatabaseUrl = process.env.DATABASE_URL;
+    const previousRedisUrl = process.env.REDIS_URL;
+
+    mkdirSync(nestedDir, { recursive: true });
+    writeFileSync(
+      resolve(tempRoot, ".env"),
+      [
+        "DATABASE_URL=postgres://file-user:file-pass@localhost:5432/file-db",
+        "REDIS_URL=redis://localhost:6380",
+      ].join("\n"),
+    );
+
+    delete process.env.DATABASE_URL;
+    delete process.env.REDIS_URL;
+    process.chdir(nestedDir);
+
+    try {
+      const env = loadApiEnv();
+      expect(env.DATABASE_URL).toBe(
+        "postgres://file-user:file-pass@localhost:5432/file-db",
+      );
+      expect(env.REDIS_URL).toBe("redis://localhost:6380");
+    } finally {
+      process.chdir(previousCwd);
+
+      if (previousDatabaseUrl === undefined) {
+        delete process.env.DATABASE_URL;
+      } else {
+        process.env.DATABASE_URL = previousDatabaseUrl;
+      }
+
+      if (previousRedisUrl === undefined) {
+        delete process.env.REDIS_URL;
+      } else {
+        process.env.REDIS_URL = previousRedisUrl;
+      }
+
+      rmSync(tempRoot, { recursive: true, force: true });
+    }
   });
 });
 

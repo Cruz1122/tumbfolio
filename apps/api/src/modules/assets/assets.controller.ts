@@ -3,7 +3,7 @@ import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-responses.decorator.js";
 import type { AssetIdParamDto } from "../../common/dto/uuid-param.dto.js";
 import { AssetDownloadUrlDto, AssetDto } from "./dto/asset.dto.js";
-import type { AssetsService } from "./assets.service.js";
+import { AssetsService } from "./assets.service.js";
 
 @ApiTags("assets")
 @ApiDefaultErrorResponses()

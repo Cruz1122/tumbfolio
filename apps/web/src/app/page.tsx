@@ -1,29 +1,50 @@
-import Link from "next/link";
-import { ApiHealthCard } from "@/components/ApiHealthCard";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+import { Hero } from "@/components/Hero";
+import { heroContent } from "@/lib/hero-content";
+import { useNotebookUpload } from "@/features/upload/use-notebook-upload";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  const upload = useNotebookUpload({
+    onCompleted: (result) => {
+      setTimeout(() => {
+        router.push(`/notebooks/${result.source_notebook_id}/summary`);
+      }, 2000);
+    },
+  });
+
+  useEffect(() => {
+    if (upload.status !== "failed") {
+      return;
+    }
+
+    const resetTimer = window.setTimeout(() => {
+      upload.resetUpload();
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(resetTimer);
+    };
+  }, [upload.resetUpload, upload.status]);
+
   return (
-    <main className="min-h-screen bg-white p-8 text-gray-900">
-      <section className="mx-auto max-w-5xl">
-        <p className="text-sm font-semibold uppercase tracking-wide text-orange-600">T-01 scaffold</p>
-        <h1 className="mt-4 text-5xl font-bold tracking-tight">Tumbfolio</h1>
-        <p className="mt-4 max-w-2xl text-lg text-gray-600">
-          Frontend Next.js separado del backend NestJS. La app web consume API; no aloja parser, storage ni export jobs.
-        </p>
-
-        <div className="mt-8 flex gap-3">
-          <Link className="rounded-xl bg-orange-600 px-4 py-2 font-semibold text-white" href="/editor">
-            Abrir editor
-          </Link>
-          <Link className="rounded-xl border border-gray-300 px-4 py-2 font-semibold" href="/present">
-            Presentar
-          </Link>
-        </div>
-
-        <div className="mt-8 max-w-md">
-          <ApiHealthCard />
-        </div>
-      </section>
+    <main className="min-h-screen bg-white text-gray-900">
+      <Hero
+        content={heroContent}
+        onUploadNotebook={upload.uploadNotebook}
+        uploadState={{
+          status: upload.status,
+          progress: upload.progress,
+          selectedFile: upload.selectedFile,
+          error: upload.error,
+          isBusy: upload.isBusy,
+        }}
+      />
     </main>
   );
 }

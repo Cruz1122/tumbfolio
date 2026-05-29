@@ -4,7 +4,7 @@ import { ApiDefaultErrorResponses } from "../../common/decorators/api-error-resp
 import type { ExportJobIdParamDto } from "../../common/dto/uuid-param.dto.js";
 import type { CreateExportJobDto } from "./dto/create-export-job.dto.js";
 import { ExportJobDto } from "./dto/export-job.dto.js";
-import type { ExportsService } from "./exports.service.js";
+import { ExportsService } from "./exports.service.js";
 
 @ApiTags("exports")
 @ApiDefaultErrorResponses()

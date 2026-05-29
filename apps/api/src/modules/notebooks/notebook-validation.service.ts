@@ -2,9 +2,9 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { analyzeNotebookJson } from "@tumbfolio/notebook";
 import { ApiErrorCode } from "../../common/errors/api-error-code.js";
 import { ApiException } from "../../common/errors/api.exception.js";
-import type { DbService } from "../database/database.service.js";
-import type { StorageService } from "../storage/storage.service.js";
 import type { NotebookSummaryDto } from "./dto/notebook.dto.js";
+import { DbService } from "../database/database.service.js";
+import { StorageService } from "../storage/storage.service.js";
 
 const MAX_NOTEBOOK_SIZE_BYTES = 50 * 1024 * 1024;
 

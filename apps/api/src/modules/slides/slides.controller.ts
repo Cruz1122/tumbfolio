@@ -7,7 +7,7 @@ import type {
 } from "../../common/dto/uuid-param.dto.js";
 import { SlideDto } from "./dto/slide.dto.js";
 import type { UpdateSlideDto } from "./dto/update-slide.dto.js";
-import type { SlidesService } from "./slides.service.js";
+import { SlidesService } from "./slides.service.js";
 
 @ApiTags("slides")
 @ApiDefaultErrorResponses()

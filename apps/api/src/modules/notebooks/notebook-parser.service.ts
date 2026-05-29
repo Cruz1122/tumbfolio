@@ -6,8 +6,6 @@ import {
 import { randomUUID } from "node:crypto";
 import { ApiErrorCode } from "../../common/errors/api-error-code.js";
 import { ApiException } from "../../common/errors/api.exception.js";
-import type { DbService } from "../database/database.service.js";
-import type { StorageService } from "../storage/storage.service.js";
 import type {
   GetNotebookCellsQueryDto,
   NotebookCellAssetRefDto,
@@ -17,6 +15,8 @@ import type {
   ParseNotebookQueryDto,
   ParseNotebookResponseDto,
 } from "./dto/notebook.dto.js";
+import { DbService } from "../database/database.service.js";
+import { StorageService } from "../storage/storage.service.js";
 
 const PARSER_VERSION = "t09-v1";
 const DOWNLOAD_URL_TTL_SECONDS = 600;

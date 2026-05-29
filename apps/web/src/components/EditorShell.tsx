@@ -7,7 +7,6 @@ export function EditorShell() {
           Slide 1 — placeholder
         </div>
       </aside>
-
       <section className="p-8">
         <div className="mx-auto aspect-video max-w-5xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <p className="text-sm font-semibold text-orange-600">Preview</p>
@@ -17,7 +16,6 @@ export function EditorShell() {
           </p>
         </div>
       </section>
-
       <aside className="border-l border-gray-200 p-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Properties</p>
         <div className="mt-4 space-y-3 text-sm text-gray-600">

@@ -8,9 +8,12 @@
     "pnpm": "11.4.0"
   },
   "scripts": {
+    "predev": "pnpm --filter @tumbfolio/config build",
     "dev": "concurrently \"pnpm --filter @tumbfolio/api dev\" \"pnpm --filter @tumbfolio/web dev\" \"pnpm --filter @tumbfolio/worker dev\"",
+    "predev:api": "pnpm --filter @tumbfolio/config build",
     "dev:web": "pnpm --filter @tumbfolio/web dev",
     "dev:api": "pnpm --filter @tumbfolio/api dev",
+    "predev:worker": "pnpm --filter @tumbfolio/config build",
     "dev:worker": "pnpm --filter @tumbfolio/worker dev",
     "build": "pnpm -r build",
     "lint": "eslint . --max-warnings=0",
