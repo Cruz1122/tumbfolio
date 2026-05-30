@@ -286,7 +286,7 @@ export function Hero({ content, onUploadNotebook, uploadState }: HeroProps) {
           <div className="flex flex-col items-center gap-4">
             <UploadIcon className={`text-6xl ${accentText(displayedFeedback.accent)}`} />
             <p className={`text-lg font-semibold ${accentText(displayedFeedback.accent)}`}>
-              Suelta tu notebook .ipynb acá
+              Suelta tu notebook .ipynb aquí
             </p>
           </div>
         </div>

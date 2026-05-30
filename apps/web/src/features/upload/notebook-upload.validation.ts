@@ -29,7 +29,7 @@ export function validateNotebookFile(
     return {
       code: "NO_FILE",
       title: "Sin archivo seleccionado",
-      message: "Seleccioná un notebook .ipynb ya ejecutado para continuar.",
+      message: "Selecciona un notebook .ipynb ya ejecutado para continuar.",
     };
   }
 
@@ -49,7 +49,7 @@ export function validateNotebookFile(
       code: "NO_FILE",
       title: "Archivo vacío",
       message:
-        "El notebook está vacío. Exportalo o guardalo de nuevo desde Jupyter o Colab.",
+        "El notebook está vacío. Expórtalo o guárdalo de nuevo desde Jupyter o Colab.",
     };
   }
 
@@ -66,7 +66,7 @@ export function validateNotebookFile(
       code: "UNSUPPORTED_CONTENT_TYPE",
       title: "Tipo de archivo no soportado",
       message:
-        "El navegador reportó un tipo de archivo no compatible. Usá un .ipynb estándar exportado desde Jupyter, Colab o VS Code.",
+        "El navegador reportó un tipo de archivo no compatible. Usa un .ipynb estándar exportado desde Jupyter, Colab o VS Code.",
     };
   }
 

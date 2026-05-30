@@ -132,6 +132,21 @@ describe("initiateNotebookUpload", () => {
       code: "API_REQUEST_FAILED",
     });
   });
+
+  it("throws UploadUiError with API_UNAVAILABLE when fetch rejects", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("fetch failed"));
+
+    await expect(
+      initiateNotebookUpload({
+        original_filename: "test.ipynb",
+        content_type: "application/x-ipynb+json",
+        file_size_bytes: 1024,
+        sha256: "abc",
+      }),
+    ).rejects.toMatchObject({
+      code: "API_UNAVAILABLE",
+    });
+  });
 });
 
 describe("completeNotebookUpload", () => {

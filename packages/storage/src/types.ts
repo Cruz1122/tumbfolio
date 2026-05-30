@@ -67,6 +67,7 @@ export type HeadObjectResult = {
 };
 
 export type ObjectStorage = {
+  ensureBucketExists(): Promise<void>;
   putObject(input: PutObjectInput): Promise<PutObjectResult>;
   multipartUpload(input: MultipartUploadInput): Promise<PutObjectResult>;
   getObject(key: string): Promise<GetObjectResult>;

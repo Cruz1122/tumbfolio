@@ -109,7 +109,7 @@ describe("useNotebookUpload", () => {
     const validationError = {
       code: "NO_FILE",
       title: "Sin archivo",
-      message: "Seleccioná un archivo",
+      message: "Selecciona un archivo",
     };
     vi.mocked(validateNotebookFile).mockReturnValue(validationError);
 

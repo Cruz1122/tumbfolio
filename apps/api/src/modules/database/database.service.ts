@@ -1,4 +1,4 @@
-import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import { HttpStatus, Injectable, OnModuleDestroy } from "@nestjs/common";
 import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { type PgTransaction } from "drizzle-orm/pg-core";
 import {
@@ -12,6 +12,8 @@ import {
   presentations,
 } from "@tumbfolio/db";
 import { randomUUID } from "node:crypto";
+import { ApiErrorCode } from "../../common/errors/api-error-code.js";
+import { ApiException } from "../../common/errors/api.exception.js";
 
 type DbExecutor = ReturnType<typeof createDbClient>["db"];
 
@@ -386,9 +388,22 @@ export class DbService implements OnModuleDestroy {
   async transaction<T>(
     fn: (tx: TransactionDb) => Promise<T>,
   ): Promise<T> {
-    return this.client.db.transaction(async (drizzleTx) => {
-      const dao = new TransactionDb(drizzleTx as unknown as DbExecutor);
-      return fn(dao);
-    });
+    try {
+      return await this.client.db.transaction(async (drizzleTx) => {
+        const dao = new TransactionDb(drizzleTx as unknown as DbExecutor);
+        return fn(dao);
+      });
+    } catch (error) {
+      if (error instanceof ApiException) {
+        throw error;
+      }
+
+      throw new ApiException(
+        ApiErrorCode.DATABASE_UNAVAILABLE,
+        "Database is unavailable.",
+        HttpStatus.SERVICE_UNAVAILABLE,
+        error instanceof Error ? { cause: error.message } : undefined,
+      );
+    }
   }
 }

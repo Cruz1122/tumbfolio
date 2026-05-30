@@ -23,12 +23,18 @@ function toUserError(
   const code = body?.error_code ?? fallbackCode;
 
   const messageByCode: Record<string, string> = {
+    API_UNAVAILABLE:
+      "No se pudo conectar con la API de Tumbfolio. Verifica que el backend esté levantado.",
+    DATABASE_UNAVAILABLE:
+      "La base de datos no está disponible. Levanta Postgres e intenta de nuevo.",
     FILE_TOO_LARGE: "El notebook supera el tamaño máximo permitido.",
     INVALID_FILE_TYPE: "Solo se aceptan notebooks .ipynb ejecutados.",
     UNSUPPORTED_CONTENT_TYPE:
       "El tipo de archivo subido no es compatible.",
+    STORAGE_UNAVAILABLE:
+      "El almacenamiento no está disponible. Verifica MinIO o S3 e intenta de nuevo.",
     STORAGE_OBJECT_NOT_FOUND:
-      "El archivo no llegó al almacenamiento. Intentá de nuevo.",
+      "El archivo no llegó al almacenamiento. Intenta de nuevo.",
     STORAGE_METADATA_MISMATCH:
       "Los metadatos del archivo no coinciden con el notebook seleccionado.",
     INVALID_SHA256: "El hash del archivo subido es inválido.",
@@ -62,13 +68,23 @@ async function apiPost<TResponse>(
   path: string,
   body: unknown,
 ): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw toUserError(
+      "API_UNAVAILABLE",
+      "No se pudo conectar",
+      "La API de Tumbfolio no responde.",
+    );
+  }
 
   const payload = await readJsonSafely(response);
 
@@ -157,7 +173,7 @@ export function uploadFileToSignedUrl(params: {
         code: "SIGNED_UPLOAD_FAILED",
         title: "Error al subir el archivo",
         message:
-          "No se pudo subir el notebook al almacenamiento. Intentá de nuevo.",
+          "No se pudo subir el notebook al almacenamiento. Intenta de nuevo.",
       } satisfies UploadUiError);
     };
 
@@ -166,7 +182,7 @@ export function uploadFileToSignedUrl(params: {
         code: "SIGNED_UPLOAD_FAILED",
         title: "Error al subir el archivo",
         message:
-          "No se pudo subir el notebook. Revisá tu conexión e intentá de nuevo.",
+          "No se pudo subir el notebook. Revisa tu conexión e intenta de nuevo.",
       } satisfies UploadUiError);
     };
 

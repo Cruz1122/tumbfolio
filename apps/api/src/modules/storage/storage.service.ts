@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { HttpStatus, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Readable } from "node:stream";
 import {
   buildStorageKey,
@@ -11,6 +11,8 @@ import {
   type StorageNamespace,
 } from "@tumbfolio/storage";
 import { loadApiEnv } from "@tumbfolio/config";
+import { ApiErrorCode } from "../../common/errors/api-error-code.js";
+import { ApiException } from "../../common/errors/api.exception.js";
 
 export type StoreBufferInput = {
   namespace: StorageNamespace;
@@ -56,13 +58,12 @@ export class StorageService implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     try {
+      await this.storage.ensureBucketExists();
+      this.logger.log("Storage bucket is ready");
       await this.storage.setBucketCors(["http://localhost:3000"]);
       this.logger.log("Bucket CORS configured for http://localhost:3000");
     } catch (error) {
-      this.logger.warn(
-        "Could not set bucket CORS (expected if bucket does not exist yet):",
-        (error as Error).message,
-      );
+      this.logger.warn("Could not initialize storage bucket:", (error as Error).message);
     }
   }
 
@@ -124,7 +125,11 @@ export class StorageService implements OnModuleInit {
   }
 
   async headObject(key: string): Promise<HeadObjectResult | null> {
-    return this.storage.headObject(key);
+    try {
+      return await this.storage.headObject(key);
+    } catch (error) {
+      throw this.toStorageException(error);
+    }
   }
 
   async getObjectAsText(key: string): Promise<string> {
@@ -144,13 +149,30 @@ export class StorageService implements OnModuleInit {
     expiresInSeconds?: number;
     metadata?: Record<string, string>;
   }): Promise<string> {
-    return this.storage.getSignedUploadUrl({
-      key: input.key,
-      contentType: input.contentType,
-      ...(input.expiresInSeconds !== undefined
-        ? { expiresInSeconds: input.expiresInSeconds }
-        : {}),
-      ...(input.metadata ? { metadata: input.metadata } : {}),
-    });
+    try {
+      return await this.storage.getSignedUploadUrl({
+        key: input.key,
+        contentType: input.contentType,
+        ...(input.expiresInSeconds !== undefined
+          ? { expiresInSeconds: input.expiresInSeconds }
+          : {}),
+        ...(input.metadata ? { metadata: input.metadata } : {}),
+      });
+    } catch (error) {
+      throw this.toStorageException(error);
+    }
+  }
+
+  private toStorageException(error: unknown): ApiException {
+    if (error instanceof ApiException) {
+      return error;
+    }
+
+    return new ApiException(
+      ApiErrorCode.STORAGE_UNAVAILABLE,
+      "Storage is unavailable.",
+      HttpStatus.SERVICE_UNAVAILABLE,
+      error instanceof Error ? { cause: error.message } : undefined,
+    );
   }
 }

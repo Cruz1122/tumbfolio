@@ -1,7 +1,9 @@
 import type { Readable } from "node:stream";
 import {
+  CreateBucketCommand,
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadBucketCommand,
   HeadObjectCommand,
   PutBucketCorsCommand,
   PutObjectCommand,
@@ -31,6 +33,7 @@ import type {
 export type S3ObjectStorageConfig = {
   bucket: string;
   clientConfig: S3ClientConfig;
+  client?: Pick<S3Client, "send">;
 };
 
 export class S3ObjectStorage implements ObjectStorage {
@@ -39,7 +42,31 @@ export class S3ObjectStorage implements ObjectStorage {
 
   constructor(config: S3ObjectStorageConfig) {
     this.bucket = config.bucket;
-    this.client = new S3Client(config.clientConfig);
+    this.client = (config.client as S3Client | undefined) ?? new S3Client(config.clientConfig);
+  }
+
+  async ensureBucketExists(): Promise<void> {
+    try {
+      await this.client.send(
+        new HeadBucketCommand({
+          Bucket: this.bucket,
+        }),
+      );
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        (error.name === "NotFound" || error.name === "NoSuchBucket")
+      ) {
+        await this.client.send(
+          new CreateBucketCommand({
+            Bucket: this.bucket,
+          }),
+        );
+        return;
+      }
+
+      throw error;
+    }
   }
 
   async putObject(input: PutObjectInput): Promise<PutObjectResult> {

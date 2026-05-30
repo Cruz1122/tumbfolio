@@ -48,7 +48,7 @@ function normalizeUnknownError(error: unknown): UploadUiError {
     code: "UNKNOWN_UPLOAD_ERROR",
     title: "Error al cargar",
     message:
-      "No se pudo cargar el notebook. Intentá de nuevo.",
+      "No se pudo cargar el notebook. Intenta de nuevo.",
   };
 }
 
